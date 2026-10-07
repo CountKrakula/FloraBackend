@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloraBackend", "FloraBackend\FloraBackend.csproj", "{D657208D-26C3-4F48-850E-3B1486E48ADB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloraBackend", "FloraBackend.csproj", "{D657208D-26C3-4F48-850E-3B1486E48ADB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
