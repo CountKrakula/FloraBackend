@@ -6,7 +6,7 @@
         public string Name { get; set; }
         public string Notes { get; set; }
         public DateTime CreatedAt { get; set; }
-
+        public string Location { get; set; } = string.Empty;
         public int UserId { get; set; }
         public User User { get; set; }
         public int PlantSpeciesId { get; set; }

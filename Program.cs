@@ -3,6 +3,11 @@ using FloraBackend.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using FloraBackend.Repositories;
+using FloraBackend.Repositories.IRepository;
+using FloraBackend.Services;
+using FloraBackend.Services.IServices;
+using Scalar.AspNetCore;
 
 namespace FloraBackend
 {
@@ -32,8 +37,12 @@ namespace FloraBackend
             }
             builder.Services.AddControllers();
             // Add services to the container.
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            // Repositori
+            builder.Services.AddScoped<IPlantRepository, PlantRepository>();
+
+            // Service
+            builder.Services.AddScoped<IPlantService, PlantService>();
 
             var app = builder.Build();
 
@@ -41,6 +50,7 @@ namespace FloraBackend
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.MapScalarApiReference();
             }
 
             app.UseHttpsRedirection();
@@ -52,5 +62,3 @@ namespace FloraBackend
         }
     }
 }
-
-
