@@ -1,4 +1,4 @@
-﻿namespace FloraBackend.DTOs
+﻿namespace FloraBackend.DTOs.Plants
 {
     public class PlantDto
     {
