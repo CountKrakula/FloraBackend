@@ -1,6 +1,5 @@
 using FloraBackend.Data;
 using FloraBackend.Models;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FloraBackend.Repositories;
@@ -38,11 +37,13 @@ namespace FloraBackend
             builder.Services.AddControllers();
             // Add services to the container.
             builder.Services.AddOpenApi();
-            // Repositori
+            // Repositories
             builder.Services.AddScoped<IPlantRepository, PlantRepository>();
+            builder.Services.AddScoped<ICareTaskRepository, CareTaskRepository>();
 
-            // Service
+            // Services
             builder.Services.AddScoped<IPlantService, PlantService>();
+            builder.Services.AddScoped<ICareTaskService, CareTaskService>();
 
             var app = builder.Build();
 
@@ -55,7 +56,9 @@ namespace FloraBackend
 
             app.UseHttpsRedirection();
 
+            app.MapIdentityApi<User>();
 
+            app.MapControllers();
 
             app.Run();
 

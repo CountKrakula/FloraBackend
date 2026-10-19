@@ -47,7 +47,7 @@ namespace FloraBackend.Repositories
             {
                 return false;
             }
-
+            
             _context.Plants.Remove(plant);
             await _context.SaveChangesAsync();
             return true;

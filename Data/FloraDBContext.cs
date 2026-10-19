@@ -1,5 +1,4 @@
 ﻿using FloraBackend.Models;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -22,7 +21,8 @@ namespace FloraBackend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            base.OnModelCreating(modelBuilder);
         }
+
     }
 }

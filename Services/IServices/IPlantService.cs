@@ -1,4 +1,4 @@
-﻿using FloraBackend.DTOs;
+﻿using FloraBackend.DTOs.Plants;
 
 namespace FloraBackend.Services.IServices
 {
