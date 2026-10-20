@@ -60,5 +60,29 @@ namespace FloraBackend.Repositories
                 .ExecuteUpdateAsync(s =>
                     s.SetProperty(i => i.IsProfilePicture, false));
         }
+        // Update a single image
+        public async Task<bool> UpdateImage(Image image)
+        {
+            _context.Images.Update(image);
+            var result = await _context.SaveChangesAsync();
+            if(result > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        // Delete by ID without fetching first
+        public async Task<bool> DeleteImage(int imgId)
+        {
+            var result = await _context.Images
+                .Where(i => i.ImageId == imgId)
+                .ExecuteDeleteAsync();
+            if (result > 0)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

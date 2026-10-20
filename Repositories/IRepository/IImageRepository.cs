@@ -9,5 +9,7 @@ namespace FloraBackend.Repositories.IRepository
         Task<int> CreateImage(Image image);
         Task<bool> ImageExistsByHashAndPlant(string hash, int plantId);
         Task ClearProfilePicturesForPlant(int plantId);
+        Task<bool> UpdateImage(Image image);
+        Task<bool> DeleteImage(int imgId);
     }
 }

@@ -54,7 +54,9 @@ namespace FloraBackend.Services
         {
             //Checks if there is an image file or isn't too big
             if (file == null || file.Length == 0)
+            {
                 return (false, new List<string?> { "Ingen fil uppladdad" });
+            }
 
             if (!file.ContentType.StartsWith("image/"))
             {
@@ -138,5 +140,113 @@ namespace FloraBackend.Services
 
             return (true, new List<string?>());
         }
+        public async Task<(bool isSuccessful, List<string?> Errors)> UpdateImage(int imageId, IFormFile newFile, int userId)
+        {
+            // Validate file
+            if (newFile == null || newFile.Length == 0)
+            {
+                return (false, new List<string?> { "Ingen fil uppladdad" });
+            }
+
+            if (!newFile.ContentType.StartsWith("image/"))
+            {
+                return (false, new List<string?> { "Endast bilder är tillåtna" });
+            }
+
+            if (newFile.Length > 5 * 1024 * 1024)
+            {
+                return (false, new List<string?> { "Filen är för stor" });
+            }
+
+
+            // Get existing image
+            var existingImage = await _imageRepository.GetImage(imageId);
+            if (existingImage == null)
+            {
+                return (false, new List<string?> { "Bilden hittades inte" });
+            }
+              
+
+            // Verify user owns this image's plant
+            var plant = await _plantRepository.GetByIdAsync(existingImage.PlantId);
+            if (plant?.UserId != userId)
+            {
+                return (false, new List<string?> { "Ogiltig åtkomst" });
+            }
+
+            // Read and hash new file
+            byte[] fileBytes;
+            string newHash;
+            using (var memoryStream = new MemoryStream())
+            {
+                await newFile.CopyToAsync(memoryStream);
+                fileBytes = memoryStream.ToArray();
+            }
+
+            using (var sha = SHA256.Create())
+            {
+                newHash = Convert.ToBase64String(sha.ComputeHash(fileBytes));
+            }
+
+            // Delete old file from folder
+            var oldFileName = Path.GetFileName(new Uri(existingImage.Url, UriKind.RelativeOrAbsolute).LocalPath);
+            var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", oldFileName);
+            if (File.Exists(oldFilePath))
+                File.Delete(oldFilePath);
+
+            // Save new file
+            var newFileName = $"{Guid.NewGuid()}{Path.GetExtension(newFile.FileName)}";
+            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var uploadPath = Path.Combine(rootPath, "uploads");
+
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+                
+            var newFilePath = Path.Combine(uploadPath, newFileName);
+            await File.WriteAllBytesAsync(newFilePath, fileBytes);
+
+            // Update database
+            existingImage.Url = $"/uploads/{newFileName}";
+            existingImage.Hash = newHash;
+
+            var result = await _imageRepository.UpdateImage(existingImage);
+
+            return result
+                ? (true, new List<string?>())
+                : (false, new List<string?> { "Kunde inte uppdatera bilden" });
+        }
+
+        public async Task<(bool isSuccessful, List<string?> Errors)> DeleteImage(int imageId, int userId)
+        {
+            // Get image
+            var image = await _imageRepository.GetImage(imageId);
+            if (image == null)
+            {
+                return (false, new List<string?> { "Bilden hittades inte" });
+            }
+
+            // Verify user owns this image's plant
+            var plant = await _plantRepository.GetByIdAsync(image.PlantId);
+            if (plant?.UserId != userId)
+            {
+                return (false, new List<string?> { "Ogiltig åtkomst" });
+            }
+
+            // Delete file from folder
+            var fileName = Path.GetFileName(new Uri(image.Url, UriKind.RelativeOrAbsolute).LocalPath);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+
+            // Delete from database
+            var result = await _imageRepository.DeleteImage(imageId);
+
+            return result
+                ? (true, new List<string?>())
+                : (false, new List<string?> { "Kunde inte ta bort bilden" });
+        }
+
     }
 }
