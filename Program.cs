@@ -40,10 +40,12 @@ namespace FloraBackend
             // Repositories
             builder.Services.AddScoped<IPlantRepository, PlantRepository>();
             builder.Services.AddScoped<ICareTaskRepository, CareTaskRepository>();
+            builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
             // Services
             builder.Services.AddScoped<IPlantService, PlantService>();
             builder.Services.AddScoped<ICareTaskService, CareTaskService>();
+            builder.Services.AddScoped<IImageService, ImageService>();
 
             var app = builder.Build();
 

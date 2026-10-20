@@ -168,7 +168,7 @@ namespace FloraBackend.Services
               
 
             // Verify user owns this image's plant
-            var plant = await _plantRepository.GetByIdAsync(existingImage.PlantId);
+            var plant = await _plantRepository.GetByIdAsync(existingImage.PlantId, userId);
             if (plant?.UserId != userId)
             {
                 return (false, new List<string?> { "Ogiltig åtkomst" });
@@ -228,7 +228,7 @@ namespace FloraBackend.Services
             }
 
             // Verify user owns this image's plant
-            var plant = await _plantRepository.GetByIdAsync(image.PlantId);
+            var plant = await _plantRepository.GetByIdAsync(image.PlantId, userId);
             if (plant?.UserId != userId)
             {
                 return (false, new List<string?> { "Ogiltig åtkomst" });
