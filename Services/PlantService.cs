@@ -1,4 +1,4 @@
-﻿using FloraBackend.DTOs;
+﻿using FloraBackend.DTOs.Plants;
 using FloraBackend.Models;
 using FloraBackend.Repositories.IRepository;
 using FloraBackend.Services.IServices;
