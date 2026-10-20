@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using FloraBackend.DTOs;
+using FloraBackend.DTOs.Plants;
 using FloraBackend.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
