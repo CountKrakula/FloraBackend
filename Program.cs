@@ -47,7 +47,20 @@ namespace FloraBackend
             builder.Services.AddScoped<ICareTaskService, CareTaskService>();
             builder.Services.AddScoped<IImageService, ImageService>();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("Frontend", policy =>
+                {
+                    policy.WithOrigins(builder.Configuration["Frontend_Domain"])
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+                });
+            });
+
             var app = builder.Build();
+
+            app.UseCors("Frontend");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
