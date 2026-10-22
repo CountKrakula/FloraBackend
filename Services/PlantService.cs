@@ -38,7 +38,6 @@ namespace FloraBackend.Services
                 Name = dto.Name,
                 Location = dto.Location,
                 Notes = dto.Notes ?? string.Empty,
-                PlantSpeciesId = dto.PlantSpeciesId,
                 UserId = userId,
                 CreatedAt = DateTime.UtcNow
             };
@@ -58,7 +57,6 @@ namespace FloraBackend.Services
             plant.Name = dto.Name;
             plant.Location = dto.Location;
             plant.Notes = dto.Notes ?? string.Empty;
-            plant.PlantSpeciesId = dto.PlantSpeciesId;
 
             await _plantRepository.UpdateAsync(plant);
             return true;
@@ -77,7 +75,6 @@ namespace FloraBackend.Services
                 Name = plant.Name,
                 Location = plant.Location,
                 Notes = plant.Notes,
-                PlantSpeciesId = plant.PlantSpeciesId,
                 CreatedAt = plant.CreatedAt
             };
         }
