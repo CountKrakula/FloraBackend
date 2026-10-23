@@ -34,18 +34,21 @@ namespace FloraBackend
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 });
             }
+
             builder.Services.AddControllers();
-            // Add services to the container.
             builder.Services.AddOpenApi();
+
             // Repositories
             builder.Services.AddScoped<IPlantRepository, PlantRepository>();
             builder.Services.AddScoped<ICareTaskRepository, CareTaskRepository>();
             builder.Services.AddScoped<IImageRepository, ImageRepository>();
+            builder.Services.AddScoped<IPlantHealthLogRepository, PlantHealthLogRepository>();
 
             // Services
             builder.Services.AddScoped<IPlantService, PlantService>();
             builder.Services.AddScoped<ICareTaskService, CareTaskService>();
             builder.Services.AddScoped<IImageService, ImageService>();
+            builder.Services.AddScoped<IPlantHealthLogService, PlantHealthLogService>();
 
             builder.Services.AddCors(options =>
             {
@@ -62,7 +65,9 @@ namespace FloraBackend
 
             app.UseCors("Frontend");
 
-            // Configure the HTTP request pipeline.
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
@@ -76,7 +81,6 @@ namespace FloraBackend
             app.MapControllers();
 
             app.Run();
-
         }
     }
 }
