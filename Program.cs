@@ -75,7 +75,10 @@ namespace FloraBackend
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
+            var api = app.MapGroup("/api");
             app.MapIdentityApi<User>();
 
             app.MapControllers();
