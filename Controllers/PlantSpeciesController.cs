@@ -1,4 +1,5 @@
-﻿using FloraBackend.Services;
+﻿using FloraBackend.DTOs.PlantSpecies;
+using FloraBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,11 +18,11 @@ namespace FloraBackend.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPlantsAsync([FromQuery] string? query = null, [FromQuery][Range(1, int.MaxValue)] int page = 1)
+        public async Task<ActionResult<PlantSpeciesListResponseDTO>> GetPlantsAsync([FromQuery] string? query = null, [FromQuery][Range(1, int.MaxValue)] int page = 1)
         {
             var result = await _plantSpeciesService.GetPlantsAsync(query, page);
 
-            return Content(result, "application/json");
+            return Ok(result);
         }
 
         [HttpGet("{id}")]

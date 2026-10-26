@@ -1,4 +1,6 @@
-﻿namespace FloraBackend.Services
+﻿using FloraBackend.DTOs.PlantSpecies;
+
+namespace FloraBackend.Services
 {
     public class PlantSpeciesService
     {
@@ -11,7 +13,7 @@
             _configuration = configuration;
         }
 
-        public async Task<string> GetPlantsAsync(string? query = null, int page = 1)
+        public async Task<PlantSpeciesListResponseDTO?> GetPlantsAsync(string? query = null, int page = 1)
         {
             var apiKey = _configuration["Perenual:ApiKey"]
                 ?? throw new InvalidOperationException(
@@ -27,18 +29,17 @@
 
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsStringAsync();
+                return await response.Content.ReadFromJsonAsync<PlantSpeciesListResponseDTO>();
             }
             else
             {
-                // Hantera fel här, t.ex. logga eller kasta ett undantag
                 throw new Exception($"Error fetching data from Perenual API: {response.ReasonPhrase}");
             }
         }
 
         public async Task<string> GetPlantByIdAsync(int id)
         {
-
+            // free version of the Perenual API only allows for plant species IDs between 1 and 3000
             if (id < 1 || id > 3000)
             {
                 throw new ArgumentOutOfRangeException(nameof(id),
