@@ -37,7 +37,7 @@ namespace FloraBackend.Services
             }
         }
 
-        public async Task<string> GetPlantByIdAsync(int id)
+        public async Task<PlantSpeciesDetailsDTO?> GetPlantByIdAsync(int id)
         {
             // free version of the Perenual API only allows for plant species IDs between 1 and 3000
             if (id < 1 || id > 3000)
@@ -53,7 +53,7 @@ namespace FloraBackend.Services
             var response = await _httpClient.GetAsync($"{url}?key={apiKey}");
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsStringAsync();
+                return await response.Content.ReadFromJsonAsync<PlantSpeciesDetailsDTO>();
             }
             else
             {
