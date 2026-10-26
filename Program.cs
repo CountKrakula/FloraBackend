@@ -1,11 +1,11 @@
 using FloraBackend.Data;
 using FloraBackend.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using FloraBackend.Repositories;
 using FloraBackend.Repositories.IRepository;
 using FloraBackend.Services;
 using FloraBackend.Services.IServices;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 namespace FloraBackend
@@ -59,6 +59,11 @@ namespace FloraBackend
                     .AllowAnyMethod()
                     .AllowCredentials();
                 });
+            });
+
+            builder.Services.AddHttpClient<PlantSpeciesService>(client =>
+            {
+                client.BaseAddress = new Uri("https://perenual.com/api/v2/");
             });
 
             var app = builder.Build();
