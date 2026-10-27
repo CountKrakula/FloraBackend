@@ -80,6 +80,14 @@ namespace FloraBackend
 
             var api = app.MapGroup("/api");
             app.MapIdentityApi<User>();
+            
+            // MapIdentityApi doesn't provide a /logout endpoint out of the box,
+            // so this manually signs the user out and clears their auth cookie
+            app.MapPost("/logout", async (SignInManager<User> signInManager) =>
+            {
+                await signInManager.SignOutAsync();
+                return Results.Ok();
+            }).RequireAuthorization();
 
             app.MapControllers();
 
