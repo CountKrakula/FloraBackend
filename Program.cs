@@ -41,12 +41,14 @@ namespace FloraBackend
             // Repositories
             builder.Services.AddScoped<IPlantRepository, PlantRepository>();
             builder.Services.AddScoped<ICareTaskRepository, CareTaskRepository>();
+            builder.Services.AddScoped<ICareLogRepository, CareLogRepository>();
             builder.Services.AddScoped<IImageRepository, ImageRepository>();
             builder.Services.AddScoped<IPlantHealthLogRepository, PlantHealthLogRepository>();
 
             // Services
             builder.Services.AddScoped<IPlantService, PlantService>();
             builder.Services.AddScoped<ICareTaskService, CareTaskService>();
+            builder.Services.AddScoped<ICareLogService, CareLogService>();
             builder.Services.AddScoped<IImageService, ImageService>();
             builder.Services.AddScoped<IPlantHealthLogService, PlantHealthLogService>();
 
