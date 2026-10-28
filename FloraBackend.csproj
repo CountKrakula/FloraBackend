@@ -26,8 +26,6 @@
 
     <ItemGroup>
       <Folder Include="Data\" />
-      <Folder Include="Controllers\" />
-      <Folder Include="DTOs\" />
       <Folder Include="Repositories\IRepository\" />
       <Folder Include="Services\IServices\" />
     </ItemGroup>
