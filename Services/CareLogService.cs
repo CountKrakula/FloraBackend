@@ -18,14 +18,14 @@ namespace FloraBackend.Services
             _plantRepository = plantRepository;
         }
 
-        public async Task<List<CareLogDto>> GetAllByPlantAsync(
+        public async Task<List<CareLogDto>?> GetAllByPlantAsync(
             int plantId, int userId)
         {
             var plant = await _plantRepository.GetByIdAsync(plantId, userId);
 
             if (plant == null)
             {
-                return new List<CareLogDto>();
+                return null;
             }
 
             var careLogs =
@@ -51,11 +51,11 @@ namespace FloraBackend.Services
         }
 
         public async Task<CareLogDto?> CreateAsync(
-            CareLogDto dto, int plantId, int userId)
+            CreateCareLogDto dto, int plantId, int userId)
         {
             var plant = await _plantRepository.GetByIdAsync(plantId, userId);
 
-            if (plant == null || dto.PlantId != plantId)
+            if (plant == null)
             {
                 return null;
             }
@@ -73,11 +73,11 @@ namespace FloraBackend.Services
         }
 
         public async Task<bool> UpdateAsync(
-            int id, CareLogDto dto, int plantId, int userId)
+            int id, UpdateCareLogDto dto, int plantId, int userId)
         {
             var plant = await _plantRepository.GetByIdAsync(plantId, userId);
 
-            if (plant == null || dto.PlantId != plantId)
+            if (plant == null)
             {
                 return false;
             }

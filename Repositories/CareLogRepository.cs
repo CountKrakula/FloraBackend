@@ -18,6 +18,7 @@ namespace FloraBackend.Repositories
         {
             return await _context.CareLogs
                 .Where(log => log.PlantId == plantId)
+                .OrderByDescending(log => log.Date)
                 .ToListAsync();
         }
 

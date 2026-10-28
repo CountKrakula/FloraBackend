@@ -27,6 +27,8 @@ namespace FloraBackend.Controllers
             var careLogs = await _careLogService.GetAllByPlantAsync(
                 plantId, userId.Value);
 
+            if (careLogs == null) return NotFound();
+
             return Ok(careLogs);
         }
 
@@ -47,7 +49,7 @@ namespace FloraBackend.Controllers
 
         [HttpPost]
         public async Task<ActionResult<CareLogDto>> Create(
-            int plantId, CareLogDto dto)
+            int plantId, CreateCareLogDto dto)
         {
             var userId = GetUserId();
             if (userId == null) return Unauthorized();
@@ -65,7 +67,7 @@ namespace FloraBackend.Controllers
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(
-            int plantId, int id, CareLogDto dto)
+            int plantId, int id, UpdateCareLogDto dto)
         {
             var userId = GetUserId();
             if (userId == null) return Unauthorized();
