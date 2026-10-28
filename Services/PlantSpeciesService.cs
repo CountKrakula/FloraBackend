@@ -25,16 +25,12 @@ namespace FloraBackend.Services
             {
                 url += $"&q={Uri.EscapeDataString(query)}";
             }
-            var response = await _httpClient.GetAsync(url);
+            using var response = await _httpClient.GetAsync(url);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<PlantSpeciesListResponseDTO>();
-            }
-            else
-            {
-                throw new Exception($"Error fetching data from Perenual API: {response.ReasonPhrase}");
-            }
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content
+                .ReadFromJsonAsync<PlantSpeciesListResponseDTO>();
         }
 
         public async Task<PlantSpeciesDetailsDTO?> GetPlantByIdAsync(int id)

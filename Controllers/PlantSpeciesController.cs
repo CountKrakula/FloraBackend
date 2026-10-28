@@ -26,9 +26,14 @@ namespace FloraBackend.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<PlantSpeciesDetailsDTO>> GetPlantByIdAsync([FromRoute] int id)
+        public async Task<ActionResult<PlantSpeciesDetailsDTO>> GetPlantByIdAsync([FromRoute][Range(1, 3000)] int id)
         {
             var result = await _plantSpeciesService.GetPlantByIdAsync(id);
+            if (result is null)
+            {
+                return NotFound();
+            }
+
             return Ok(result);
         }
 
