@@ -28,6 +28,12 @@ namespace FloraBackend.Repositories
                 .FirstOrDefaultAsync(l => l.PlantHealthLogId == id && l.Plant.UserId == userId);
         }
 
+        public async Task<bool> UpdateAsync(PlantHealthLog log)
+        {
+            _context.PlantHealthLogs.Update(log);
+            var updatedRows = await _context.SaveChangesAsync();
+            return updatedRows > 0;
+        }
         public async Task<PlantHealthLog> AddAsync(PlantHealthLog log)
         {
             _context.PlantHealthLogs.Add(log);
