@@ -2,6 +2,7 @@ using FloraBackend.DTOs.PlantHealthLogs;
 using FloraBackend.Models;
 using FloraBackend.Repositories.IRepository;
 using FloraBackend.Services.IServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace FloraBackend.Services
 {
@@ -42,6 +43,19 @@ namespace FloraBackend.Services
 
             var created = await _healthLogRepository.AddAsync(log);
             return MapToDto(created);
+        }
+
+        public async Task<bool> UpdateAsync(int id, UpdatePlantHealthLogDto dto, int userId)
+        {
+            var log = await _healthLogRepository.GetByIdAsync(id, userId);
+            if (log == null)
+            {
+                return false;
+            }
+
+            log.Status = dto.Status;
+
+            return await _healthLogRepository.UpdateAsync(log);
         }
 
         public async Task<bool> DeleteAsync(int id, int userId)

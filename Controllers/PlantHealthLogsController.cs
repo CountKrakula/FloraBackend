@@ -40,6 +40,18 @@ namespace FloraBackend.Controllers
             return Ok(created);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, UpdatePlantHealthLogDto dto)
+        {
+            var userId = GetUserId();
+            if (userId == null) return Unauthorized();
+
+            var updated = await _healthLogService.UpdateAsync(id, dto, userId.Value);
+            if (!updated) return NotFound();
+
+            return NoContent();
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
