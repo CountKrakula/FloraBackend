@@ -90,11 +90,26 @@ namespace FloraBackend.Controllers
 
             return NoContent();
         }
+        
+        [HttpPost("{id:int}/complete")]
+        public async Task<ActionResult<CareTaskDto>> Complete(int plantId, int id)
+        {
+            var userId = GetUserId();
+            if (userId == null) return Unauthorized();
+
+            var task = await _careTaskService.CompleteAsync(
+                id, plantId, userId.Value);
+
+            if (task == null) return NotFound();
+
+            return Ok(task);
+        }
 
         private int? GetUserId()
         {
             var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.TryParse(value, out var id) ? id : null;
         }
+        
     }
 }
