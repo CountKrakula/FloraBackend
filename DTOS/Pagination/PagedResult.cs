@@ -1,4 +1,4 @@
-﻿namespace FloraBackend.DTOs.Common
+﻿namespace FloraBackend.DTOs.Pagination
 {
     public class PagedResult<T>
     {
