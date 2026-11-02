@@ -19,7 +19,7 @@ namespace FloraBackend.Services
 
         public async Task<List<ImageDTO>> GetUserImages(int userId, int plantId)
         {
-            var images = await _imageRepository.GetImageByUserId(userId, plantId);  
+            var images = await _imageRepository.GetImageByUserId(userId, plantId);
 
             if (images == null || !images.Any())
             {
@@ -27,7 +27,7 @@ namespace FloraBackend.Services
             }
 
             List<ImageDTO> imageDTOList = new List<ImageDTO>();
-            foreach (var img in images) 
+            foreach (var img in images)
             {
                 ImageDTO imageDTO = new ImageDTO
                 {
@@ -40,6 +40,7 @@ namespace FloraBackend.Services
             }
             return imageDTOList;
         }
+
         public static string? GetProfilePictureUrl(List<Image>? images)
         {
             if (images == null || !images.Any())
@@ -52,7 +53,7 @@ namespace FloraBackend.Services
 
         public async Task<(bool isSuccesful, List<string?> Errors)> CreateImage(IFormFile file, int userId, int plantId, bool isProfilePicture)
         {
-            //Checks if there is an image file or isn't too big
+            // Checks if there is an image file or isn't too big
             if (file == null || file.Length == 0)
             {
                 return (false, new List<string?> { "Ingen fil uppladdad" });
@@ -62,8 +63,7 @@ namespace FloraBackend.Services
             {
                 return (false, new List<string?> { "Endast bilder är tillåtna" });
             }
-            
-            //This also goes for image size so for example a 1200*1200 image won't work
+
             if (file.Length > 5 * 1024 * 1024)
             {
                 return (false, new List<string?> { "Filen är för stor" });
@@ -74,13 +74,14 @@ namespace FloraBackend.Services
                 return (false, new List<string?> { "Ogiltigt PlantId" });
             }
 
-            var currentPlants = await _plantRepository.GetAllByUserAsync(userId);
-            if (!currentPlants.Any(p => p.PlantId == plantId))
+            // Kollar direkt om växten finns och tillhör användaren
+            var plant = await _plantRepository.GetByIdAsync(plantId, userId);
+            if (plant == null)
             {
-                return (false, new List<string?> { "Ogiltig plant"});
+                return (false, new List<string?> { "Ogiltig plant" });
             }
 
-            //Reads the files/images into memory first
+            // Reads the files/images into memory first
             byte[] fileBytes;
             string hash;
 
@@ -90,20 +91,20 @@ namespace FloraBackend.Services
                 fileBytes = memoryStream.ToArray();
             }
 
-            //Creates hash so images can't get duplicated
+            // Creates hash so images can't get duplicated
             using (var sha = SHA256.Create())
             {
                 hash = Convert.ToBase64String(sha.ComputeHash(fileBytes));
             }
 
-            //Checks for duplicates
+            // Checks for duplicates
             var imageExist = await _imageRepository.ImageExistsByHashAndPlant(hash, plantId);
             if (imageExist)
             {
                 return (false, new List<string?> { "Denna bild finns redan uppladdad." });
             }
 
-            //Saves it to wwwroot
+            // Saves it to wwwroot
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
 
             var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
@@ -116,7 +117,7 @@ namespace FloraBackend.Services
 
             await File.WriteAllBytesAsync(filePath, fileBytes);
 
-            //If profile picture is added or changed 
+            // If profile picture is added or changed 
             if (isProfilePicture)
             {
                 await _imageRepository.ClearProfilePicturesForPlant(plantId);
@@ -140,9 +141,9 @@ namespace FloraBackend.Services
 
             return (true, new List<string?>());
         }
+
         public async Task<(bool isSuccessful, List<string?> Errors)> UpdateImage(int imageId, IFormFile newFile, int userId)
         {
-            // Validate file
             if (newFile == null || newFile.Length == 0)
             {
                 return (false, new List<string?> { "Ingen fil uppladdad" });
@@ -158,23 +159,18 @@ namespace FloraBackend.Services
                 return (false, new List<string?> { "Filen är för stor" });
             }
 
-
-            // Get existing image
             var existingImage = await _imageRepository.GetImage(imageId);
             if (existingImage == null)
             {
                 return (false, new List<string?> { "Bilden hittades inte" });
             }
-              
 
-            // Verify user owns this image's plant
             var plant = await _plantRepository.GetByIdAsync(existingImage.PlantId, userId);
             if (plant?.UserId != userId)
             {
                 return (false, new List<string?> { "Ogiltig åtkomst" });
             }
 
-            // Read and hash new file
             byte[] fileBytes;
             string newHash;
             using (var memoryStream = new MemoryStream())
@@ -188,13 +184,11 @@ namespace FloraBackend.Services
                 newHash = Convert.ToBase64String(sha.ComputeHash(fileBytes));
             }
 
-            // Delete old file from folder
             var oldFileName = Path.GetFileName(new Uri(existingImage.Url, UriKind.RelativeOrAbsolute).LocalPath);
             var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", oldFileName);
             if (File.Exists(oldFilePath))
                 File.Delete(oldFilePath);
 
-            // Save new file
             var newFileName = $"{Guid.NewGuid()}{Path.GetExtension(newFile.FileName)}";
             var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
             var uploadPath = Path.Combine(rootPath, "uploads");
@@ -203,11 +197,10 @@ namespace FloraBackend.Services
             {
                 Directory.CreateDirectory(uploadPath);
             }
-                
+
             var newFilePath = Path.Combine(uploadPath, newFileName);
             await File.WriteAllBytesAsync(newFilePath, fileBytes);
 
-            // Update database
             existingImage.Url = $"/uploads/{newFileName}";
             existingImage.Hash = newHash;
 
@@ -220,33 +213,28 @@ namespace FloraBackend.Services
 
         public async Task<(bool isSuccessful, List<string?> Errors)> DeleteImage(int imageId, int userId)
         {
-            // Get image
             var image = await _imageRepository.GetImage(imageId);
             if (image == null)
             {
                 return (false, new List<string?> { "Bilden hittades inte" });
             }
 
-            // Verify user owns this image's plant
             var plant = await _plantRepository.GetByIdAsync(image.PlantId, userId);
             if (plant?.UserId != userId)
             {
                 return (false, new List<string?> { "Ogiltig åtkomst" });
             }
 
-            // Delete file from folder
             var fileName = Path.GetFileName(new Uri(image.Url, UriKind.RelativeOrAbsolute).LocalPath);
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
             if (File.Exists(filePath))
                 File.Delete(filePath);
 
-            // Delete from database
             var result = await _imageRepository.DeleteImage(imageId);
 
             return result
                 ? (true, new List<string?>())
                 : (false, new List<string?> { "Kunde inte ta bort bilden" });
         }
-
     }
 }

@@ -1,8 +1,9 @@
-﻿using System.Security.Claims;
+﻿using FloraBackend.DTOs.Pagination;
 using FloraBackend.DTOs.Plants;
 using FloraBackend.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FloraBackend.Controllers
 {
@@ -19,12 +20,12 @@ namespace FloraBackend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<PlantDto>>> GetAll()
+        public async Task<ActionResult<PagedResult<PlantDto>>> GetAll([FromQuery] PaginationQuery query)
         {
             var userId = GetUserId();
             if (userId == null) return Unauthorized();
 
-            var plants = await _plantService.GetAllAsync(userId.Value);
+            var plants = await _plantService.GetPagedAsync(userId.Value, query);
             return Ok(plants);
         }
 

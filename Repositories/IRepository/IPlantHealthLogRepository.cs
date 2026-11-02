@@ -1,10 +1,11 @@
+using FloraBackend.DTOs.Pagination;
 using FloraBackend.Models;
 
 namespace FloraBackend.Repositories.IRepository
 {
     public interface IPlantHealthLogRepository
     {
-        Task<List<PlantHealthLog>> GetAllForPlantAsync(int plantId, int userId);
+        Task<PagedResult<PlantHealthLog>> GetPagedForPlantAsync(int plantId, int userId, PaginationQuery query);
         Task<PlantHealthLog?> GetByIdAsync(int id, int userId);
         Task<PlantHealthLog> AddAsync(PlantHealthLog log);
         Task<bool> UpdateAsync(PlantHealthLog log);

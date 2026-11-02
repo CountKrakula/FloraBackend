@@ -1,4 +1,5 @@
 ﻿using FloraBackend.Data;
+using FloraBackend.DTOs.Pagination;
 using FloraBackend.Models;
 using FloraBackend.Repositories.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +15,27 @@ namespace FloraBackend.Repositories
             _context = context;
         }
 
-        public async Task<List<CareLog>> GetAllByPlantAsync(int plantId)
+        public async Task<PagedResult<CareLog>> GetPagedByPlantAsync(int plantId, PaginationQuery query)
         {
-            return await _context.CareLogs
+            var baseQuery = _context.CareLogs
+                .AsNoTracking()
                 .Where(log => log.PlantId == plantId)
-                .OrderByDescending(log => log.Date)
+                .OrderByDescending(log => log.Date);
+
+            var totalCount = await baseQuery.CountAsync();
+
+            var items = await baseQuery
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
                 .ToListAsync();
+
+            return new PagedResult<CareLog>
+            {
+                Items = items,
+                PageNumber = query.PageNumber,
+                PageSize = query.PageSize,
+                TotalCount = totalCount
+            };
         }
 
         public async Task<CareLog?> GetByIdAsync(int id, int plantId)
