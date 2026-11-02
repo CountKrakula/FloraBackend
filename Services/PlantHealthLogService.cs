@@ -1,3 +1,4 @@
+using FloraBackend.DTOs.Pagination;
 using FloraBackend.DTOs.PlantHealthLogs;
 using FloraBackend.Models;
 using FloraBackend.Repositories.IRepository;
@@ -11,20 +12,18 @@ namespace FloraBackend.Services
         private readonly IPlantHealthLogRepository _healthLogRepository;
         private readonly IPlantRepository _plantRepository;
 
-        public PlantHealthLogService(
-            IPlantHealthLogRepository healthLogRepository,
-            IPlantRepository plantRepository)
+        public async Task<PagedResult<PlantHealthLogDto>> GetPagedForPlantAsync(int plantId, int userId, PaginationQuery query)
         {
-            _healthLogRepository = healthLogRepository;
-            _plantRepository = plantRepository;
-        }
+            var pagedLogs = await _healthLogRepository.GetPagedForPlantAsync(plantId, userId, query);
 
-        public async Task<List<PlantHealthLogDto>> GetAllForPlantAsync(int plantId, int userId)
-        {
-            var logs = await _healthLogRepository.GetAllForPlantAsync(plantId, userId);
-            return logs.Select(MapToDto).ToList();
+            return new PagedResult<PlantHealthLogDto>
+            {
+                Items = pagedLogs.Items.Select(MapToDto).ToList(),
+                PageNumber = pagedLogs.PageNumber,
+                PageSize = pagedLogs.PageSize,
+                TotalCount = pagedLogs.TotalCount
+            };
         }
-
         public async Task<PlantHealthLogDto?> CreateAsync(CreatePlantHealthLogDto dto, int userId)
         {
             // Kolla att växten finns och tillhör användaren

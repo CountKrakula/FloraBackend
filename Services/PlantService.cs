@@ -1,4 +1,5 @@
-﻿using FloraBackend.DTOs.Plants;
+﻿using FloraBackend.DTOs.Pagination;
+using FloraBackend.DTOs.Plants;
 using FloraBackend.Models;
 using FloraBackend.Repositories.IRepository;
 using FloraBackend.Services.IServices;
@@ -14,10 +15,17 @@ namespace FloraBackend.Services
             _plantRepository = plantRepository;
         }
 
-        public async Task<List<PlantDto>> GetAllAsync(int userId)
+        public async Task<PagedResult<PlantDto>> GetPagedAsync(int userId, PaginationQuery query)
         {
-            var plants = await _plantRepository.GetAllByUserAsync(userId);
-            return plants.Select(MapToDto).ToList();
+            var pagedPlants = await _plantRepository.GetPagedByUserAsync(userId, query);
+
+            return new PagedResult<PlantDto>
+            {
+                Items = pagedPlants.Items.Select(MapToDto).ToList(),
+                PageNumber = pagedPlants.PageNumber,
+                PageSize = pagedPlants.PageSize,
+                TotalCount = pagedPlants.TotalCount
+            };
         }
 
         public async Task<PlantDto?> GetByIdAsync(int id, int userId)
