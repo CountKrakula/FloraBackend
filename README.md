@@ -2,18 +2,19 @@
 
 ## Lokal konfiguration (User Secrets)
 
-Projektfilen (`FloraBackend.csproj`) innehåller ett gemensamt `UserSecretsId`.
-För att köra backend lokalt och köra migreringar behöver du ställa in dina lokala värden (din lokala databas/connectionString).
+Projektfilen (`FloraBackend.csproj`) innehåller ett gemensamt `UserSecretsId`. 
+För att köra backend lokalt, köra migreringar och anropa externa tjänster behöver du ställa in dina lokala värden.
 
 ### Steg för att konfigurera:
 
-1. Högerklicka på `FloraBackend`-projektet i Visual Studio och välj **Manage User Secrets**.
-2. Klistra in strukturen från `secrets.json.example` och anpassa värdena efter din lokala miljö:
+1. Högerklicka på **FloraBackend**-projektet i Visual Studio och välj **Manage User Secrets**.
+2. Klistra in strukturen från `secrets.json.example` och anpassa värdena efter din lokala miljö (t.ex. connection string och din Perenual API-nyckel).
 
+---
 
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=FloraDb;Trusted_Connection=True;TrustServerCertificate=True;"
-  },
-  "Frontend_Domain": "http://localhost:5173"
-}
+### 🔑 Perenual API-nyckel (för PlantSpecies)
+
+För att testa eller utveckla mot `PlantSpecies`-endpoints krävs en API-nyckel från **Perenual**:
+
+1. Skapa ett gratis konto på [Perenual](https://perenual.com/) och generera en API-nyckel.
+2. Lägg till nyckeln i din lokala `secrets.json` under `"Perenual": { "ApiKey": "DIN_API_NYCKEL" }`.
