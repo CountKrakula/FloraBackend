@@ -1,8 +1,9 @@
-﻿using System.Security.Claims;
-using FloraBackend.DTOs.CareLogs;
+﻿using FloraBackend.DTOs.CareLogs;
+using FloraBackend.DTOs.Pagination;
 using FloraBackend.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FloraBackend.Controllers
 {
@@ -19,13 +20,13 @@ namespace FloraBackend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<CareLogDto>>> GetAll(int plantId)
+        public async Task<ActionResult<PagedResult<CareLogDto>>> GetAll(int plantId, [FromQuery] PaginationQuery query)
         {
             var userId = GetUserId();
             if (userId == null) return Unauthorized();
 
-            var careLogs = await _careLogService.GetAllByPlantAsync(
-                plantId, userId.Value);
+            var careLogs = await _careLogService.GetPagedByPlantAsync(
+                plantId, userId.Value, query);
 
             if (careLogs == null) return NotFound();
 
