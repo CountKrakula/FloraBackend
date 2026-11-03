@@ -189,7 +189,7 @@ namespace FloraBackend.Services
             }
 
             // Delete old file from folder
-            var oldFileName = Path.GetFileName(new Uri(existingImage.Url, UriKind.RelativeOrAbsolute).LocalPath);
+            var oldFileName = Path.GetFileName(existingImage.Url);
             var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", oldFileName);
             if (File.Exists(oldFilePath))
                 File.Delete(oldFilePath);
