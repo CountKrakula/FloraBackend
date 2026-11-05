@@ -82,6 +82,7 @@ namespace FloraBackend
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
 
