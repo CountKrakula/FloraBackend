@@ -28,7 +28,7 @@ namespace FloraBackend.Controllers
             {
                 return Unauthorized();
             }
-            var images = await _imageService.GetUserImages(plantId, userId.Value);
+            var images = await _imageService.GetUserImages(userId.Value, plantId);
 
             if(images == null || !images.Any())
             {
