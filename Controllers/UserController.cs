@@ -24,14 +24,14 @@ namespace FloraBackend.Controllers
 
         [Authorize]
         [HttpDelete("delete-account")]
-
-        public async Task<IActionResult> DeleteAccount()
+        public async Task<IActionResult> DeleteAccount([FromBody] DeleteAccountDto dto)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!int.TryParse(userIdString, out int userId))
             {
                 return Unauthorized(new { Error = "You are not logged in or your session has expired. Please log in again." });
             }
+
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
@@ -48,8 +48,9 @@ namespace FloraBackend.Controllers
             if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(e => e.Description);
-                return BadRequest(new { errors });
+                return BadRequest(new { Errors = errors });
             }
+
             await _signInManager.SignOutAsync();
             return Ok(new { Message = "User account deleted successfully." });
         }
@@ -59,4 +60,5 @@ namespace FloraBackend.Controllers
             public string Password { get; set; } = string.Empty;
         }
     }
+
 }
