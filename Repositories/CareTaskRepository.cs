@@ -25,6 +25,7 @@ namespace FloraBackend.Repositories
         public async Task<List<CareTask>> GetAllByUserAsync(int userId)
         {
             return await _context.CareTasks
+                .Include(task => task.Plant)
                 .Where(task => task.Plant!.UserId == userId)
                 .OrderBy(task => task.NextDueAt)
                 .ToListAsync();

@@ -178,7 +178,8 @@ namespace FloraBackend.Services
                 IntervalDays = careTask.IntervalDays,
                 LastDoneAt = careTask.LastDoneAt,
                 NextDueAt = careTask.NextDueAt,
-                PlantId = careTask.PlantId
+                PlantId = careTask.PlantId,
+                PlantName = careTask.Plant?.Name ?? string.Empty,
             };
         }
     }
