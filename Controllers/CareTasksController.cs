@@ -1,8 +1,8 @@
-﻿using System.Security.Claims;
-using FloraBackend.DTOs.CareTasks;
+﻿using FloraBackend.DTOs.CareTasks;
 using FloraBackend.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FloraBackend.Controllers
 {
@@ -26,6 +26,21 @@ namespace FloraBackend.Controllers
 
             var tasks = await _careTaskService.GetAllByPlantAsync(
                 plantId, userId.Value);
+
+            return Ok(tasks);
+        }
+
+        [HttpGet("~/api/caretasks")]
+        public async Task<ActionResult<List<CareTaskDto>>> GetAllForUser()
+        {
+            var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userIdValue, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var tasks = await _careTaskService.GetAllByUserAsync(userId);
 
             return Ok(tasks);
         }
@@ -90,7 +105,7 @@ namespace FloraBackend.Controllers
 
             return NoContent();
         }
-        
+
         [HttpPost("{id:int}/complete")]
         public async Task<ActionResult<CareTaskDto>> Complete(int plantId, int id)
         {
@@ -110,6 +125,6 @@ namespace FloraBackend.Controllers
             var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.TryParse(value, out var id) ? id : null;
         }
-        
+
     }
 }

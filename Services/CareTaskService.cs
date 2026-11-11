@@ -32,6 +32,12 @@ namespace FloraBackend.Services
             return careTasks.Select(MapToDto).ToList();
         }
 
+        public async Task<List<CareTaskDto>> GetAllByUserAsync(int userId)
+        {
+            var tasks = await _careTaskRepository.GetAllByUserAsync(userId);
+            return tasks.Select(MapToDto).ToList();
+        }
+
         public async Task<CareTaskDto?> GetByIdAsync(
             int id, int plantId, int userId)
         {
@@ -152,7 +158,7 @@ namespace FloraBackend.Services
 
             // LastDoneAt and NextDueAt will use the exact same present time
             var now = DateTime.UtcNow;
-            
+
             careTask.LastDoneAt = now;
 
             careTask.NextDueAt = now.AddDays(careTask.IntervalDays);
@@ -172,7 +178,8 @@ namespace FloraBackend.Services
                 IntervalDays = careTask.IntervalDays,
                 LastDoneAt = careTask.LastDoneAt,
                 NextDueAt = careTask.NextDueAt,
-                PlantId = careTask.PlantId
+                PlantId = careTask.PlantId,
+                PlantName = careTask.Plant?.Name ?? string.Empty,
             };
         }
     }
