@@ -15,6 +15,8 @@ namespace FloraBackend.DTOs.CareTasks
         public DateTime NextDueAt { get; set; }
 
         public int PlantId { get; set; }
+
+        public string PlantName { get; set; } = string.Empty;
     }
 }
 
