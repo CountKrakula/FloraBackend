@@ -48,6 +48,7 @@ namespace FloraBackend
             builder.Services.AddScoped<ICareLogService, CareLogService>();
             builder.Services.AddScoped<IImageService, ImageService>();
             builder.Services.AddScoped<IPlantHealthLogService, PlantHealthLogService>();
+            builder.Services.AddScoped<IProfileService, ProfileService>();
 
             builder.Services.AddCors(options =>
             {
