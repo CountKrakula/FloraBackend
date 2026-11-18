@@ -1,6 +1,9 @@
 using FloraBackend.DTOs.Profile;
+using FloraBackend.Services;
 using FloraBackend.Services.IServices;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -26,6 +29,9 @@ namespace FloraBackend.Controllers
 
             var profile = await _profileService.GetAsync(userId.Value);
             if (profile == null) return NotFound();
+
+            var session = await HttpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
+            profile.IsFirstLogin = session.Properties?.Items.ContainsKey(LoginGreeting.FirstLoginKey) == true;
 
             return Ok(profile);
         }
