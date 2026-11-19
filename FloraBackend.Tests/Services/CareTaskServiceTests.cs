@@ -28,7 +28,7 @@ public class CareTaskServiceTests
         var careTaskServiceMock = new CareTaskService(careTaskRepoMock.Object, repoMock.Object);
 
         // Act
-        var result = await careTaskServiceMock.CompleteAsync(1, 1,1);
+        var result = await careTaskServiceMock.CompleteAsync(1, 1,1,  DateTime.UtcNow);
 
 
         // Assert
@@ -55,7 +55,7 @@ public class CareTaskServiceTests
         var careTaskServiceMock = new CareTaskService(careTaskRepoMock.Object, repoMock.Object);
         
         //Act 
-        var result = await careTaskServiceMock.CompleteAsync(1, 1,1);
+        var result = await careTaskServiceMock.CompleteAsync(1, 1,1, DateTime.UtcNow);
 
         
         // Assert
