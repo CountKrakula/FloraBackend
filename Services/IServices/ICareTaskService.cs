@@ -12,6 +12,6 @@ namespace FloraBackend.Services.IServices
         Task<bool> DeleteAsync(int id, int plantId, int userId);
         // Marks a task as done: sets LastDoneAt to now and NextDueAt to now + IntervalDays.
         // Returns the updated task, or null if the task or plant is not found.
-        Task<CareTaskDto?> CompleteAsync(int id, int plantId, int userId);
+        Task<CareTaskDto?> CompleteAsync(int id, int plantId, int userId, DateTime doneAt);
     }
 }
