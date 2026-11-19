@@ -140,30 +140,26 @@ namespace FloraBackend.Services
             return await _careTaskRepository.DeleteAsync(id, plantId);
         }
 
-        public async Task<CareTaskDto?> CompleteAsync(int id, int plantId, int userId)
+                public async Task<CareTaskDto?> CompleteAsync(
+            int id, int plantId, int userId, DateTime doneAt)
         {
+            // Check that the plant belongs to the user
             var plant = await _plantRepository.GetByIdAsync(plantId, userId);
-
             if (plant == null)
             {
                 return null;
             }
 
             var careTask = await _careTaskRepository.GetByIdAsync(id, plantId);
-
             if (careTask == null)
             {
                 return null;
             }
 
-            // LastDoneAt and NextDueAt will use the exact same present time
-            var now = DateTime.UtcNow;
+            // Last done = the chosen date, next due = that date + the interval
+            careTask.LastDoneAt = doneAt;
+            careTask.NextDueAt = doneAt.AddDays(careTask.IntervalDays);
 
-            careTask.LastDoneAt = now;
-
-            careTask.NextDueAt = now.AddDays(careTask.IntervalDays);
-
-            // Use the repository update function to save the updated task to the database
             await _careTaskRepository.UpdateAsync(careTask);
 
             return MapToDto(careTask);

@@ -107,13 +107,21 @@ namespace FloraBackend.Controllers
         }
 
         [HttpPost("{id:int}/complete")]
-        public async Task<ActionResult<CareTaskDto>> Complete(int plantId, int id)
+        public async Task<ActionResult<CareTaskDto>> Complete(
+            int plantId, int id, [FromBody] CompleteCareTaskDto? dto)
         {
             var userId = GetUserId();
             if (userId == null) return Unauthorized();
 
+            // Use the chosen date, or now if no date was sent
+            var doneAt = dto?.DoneAt?.ToUniversalTime() ?? DateTime.UtcNow;
+
+            // The date cannot be in the future
+            if (doneAt > DateTime.UtcNow.AddMinutes(1))
+                return BadRequest("The date cannot be in the future.");
+
             var task = await _careTaskService.CompleteAsync(
-                id, plantId, userId.Value);
+                id, plantId, userId.Value, doneAt);
 
             if (task == null) return NotFound();
 
@@ -125,6 +133,5 @@ namespace FloraBackend.Controllers
             var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.TryParse(value, out var id) ? id : null;
         }
-
     }
 }
