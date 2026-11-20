@@ -2,6 +2,7 @@
 using FloraBackend.Models;
 using FloraBackend.Repositories.IRepository;
 using FloraBackend.Services;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,35 @@ namespace FloraBackend.Tests.Services
 
             //Assert
             Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task UpdateImage_WhenImageDoesNotExist_ReturnsFalse()
+        {
+            // Arrange
+            var mockRepo = new Mock<IImageRepository>();
+            var mockPlantRepo = new Mock<IPlantRepository>();
+
+            int imageId = 1;
+            int userId = 1;
+
+            var mockFile = new Mock<IFormFile>();
+            mockFile.Setup(f => f.Length).Returns(1024);
+            mockFile.Setup(f => f.ContentType).Returns("image/jpeg");
+            mockFile.Setup(f => f.FileName).Returns("test.jpg");
+
+            // Image doesn't exist - return null
+            mockRepo.Setup(repo => repo.GetImage(imageId))
+                .ReturnsAsync((Image)null);
+
+            var imageService = new ImageService(mockRepo.Object, mockPlantRepo.Object);
+
+            // Act
+            var result = await imageService.UpdateImage(imageId, mockFile.Object, userId);
+
+            // Assert
+            Assert.False(result.isSuccessful);
+            Assert.Contains("Image not found", result.Errors);
         }
     }
 }
