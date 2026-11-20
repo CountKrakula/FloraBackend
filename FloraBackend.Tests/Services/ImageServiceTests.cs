@@ -63,7 +63,7 @@ namespace FloraBackend.Tests.Services
 
             // Assert
             Assert.False(result.isSuccessful);
-            Assert.Contains("Image not found", result.Errors);
+            Assert.Contains("Bilden hittades inte", result.Errors);
         }
     }
 }
